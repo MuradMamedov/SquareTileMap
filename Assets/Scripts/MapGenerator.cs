@@ -17,13 +17,13 @@ public class MapGenerator : MonoBehaviour
     public Vector3Int TmpSize;
 
     [Range(0, 100)]
-    public int InitialChance;
+    public int InitChance;
 
     [Range(1, 8)]
-    public int BirthLimit;
+    public int BirthCondition;
     
     [Range(1, 8)]
-    public int DeathLimit;
+    public int DeathCondition;
 
     [Range(1, 10)]
     public int InterationsCount;
@@ -36,7 +36,7 @@ public class MapGenerator : MonoBehaviour
 
     void Start()
     {
-        _cellsGenerator = new CellsGenerator(BirthLimit, DeathLimit);
+        _cellsGenerator = new CellsGenerator(BirthCondition, DeathCondition);
         _assetsService = new AssetsServices();
     }
 
@@ -72,7 +72,7 @@ public class MapGenerator : MonoBehaviour
 
         if (_grid == null)
         {
-            _grid = _cellsGenerator.PopulateInitialMap(width, height, InitialChance);
+            _grid = _cellsGenerator.PopulateInitialMap(width, height, InitChance);
         }
 
         timer.Start();

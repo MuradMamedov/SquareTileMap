@@ -26,24 +26,20 @@ namespace Assets.Scripts
                 {
                     numberOfNeighbours = CountLivingNeighbours(oldMap, width, height, x, y);
 
+                    newMap[x, y] = oldMap[x, y];
                     if (oldMap[x, y] == 1)
                     {
-                        if (numberOfNeighbours < _deathLimit) newMap[x, y] = 0;
-
-                        else
+                        if (numberOfNeighbours < _deathLimit)
                         {
-                            newMap[x, y] = 1;
-
+                            newMap[x, y] = 0;
                         }
                     }
 
                     if (oldMap[x, y] == 0)
                     {
-                        if (numberOfNeighbours > _birthLimit) newMap[x, y] = 1;
-
-                        else
+                        if (numberOfNeighbours > _birthLimit)
                         {
-                            newMap[x, y] = 0;
+                            newMap[x, y] = 1;
                         }
                     }
                 }
@@ -56,16 +52,19 @@ namespace Assets.Scripts
         {
             int neighb = 0;
             BoundsInt myB = new BoundsInt(-1, -1, 0, 3, 3, 1);
+
             foreach (var b in myB.allPositionsWithin)
             {
                 if (b.x == 0 && b.y == 0) continue;
-                if (posX + b.x >= 0 && posX + b.x < width && posY + b.y >= 0 && posY + b.y < height)
+                int neighbX = posX + b.x;
+                int neighbY = posY + b.y;
+                if (neighbX >= 0 && neighbX < width && neighbY >= 0 && neighbY < height)
                 {
-                    neighb += oldMap[posX + b.x, posY + b.y];
+                    neighb += oldMap[neighbX, neighbY];
                 }
                 else
                 {
-                    neighb++;
+                    neighb += 1;
                 }
             }
 
@@ -75,14 +74,19 @@ namespace Assets.Scripts
         public int[,] PopulateInitialMap(int width, int height, int chance)
         {
             int[,] newMap = new int[width, height];
+            return SpawnRandomCells(newMap, width, height, chance);
+        }
+
+        public int[,] SpawnRandomCells(int[,] map, int width, int height, int chance)
+        {
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    newMap[x, y] = Random.Range(1, 101) < chance ? 1 : 0;
+                    map[x, y] = Random.Range(1, 101) < chance ? 1 : 0;
                 }
             }
-            return newMap;
+            return map;
         }
     }
 }
