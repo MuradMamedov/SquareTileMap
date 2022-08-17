@@ -7,13 +7,13 @@ using System.Diagnostics;
 public class MapGenerator : MonoBehaviour
 {
     public Tilemap TopMap;
-    
+
     public Tilemap BotMap;
-    
+
     public RuleTile TopTile;
-    
+
     public RuleTile BotTile;
-    
+
     public Vector3Int TmpSize;
 
     [Range(0, 100)]
@@ -21,22 +21,30 @@ public class MapGenerator : MonoBehaviour
 
     [Range(1, 8)]
     public int BirthCondition;
-    
+
     [Range(1, 8)]
     public int DeathCondition;
 
     [Range(1, 10)]
     public int InterationsCount;
 
+    public int AlgorithmToUse = 0;
 
     private int _count = 0;
-    private int[,] _grid;
-    private ICellsGenerator _cellsGenerator;
+    private float[,] _grid;
+    private IMapGen _mapGen;
     private IAssetsService _assetsService;
 
     void Start()
     {
-        _cellsGenerator = new CellsGenerator(BirthCondition, DeathCondition);
+        if (AlgorithmToUse == 0)
+        {
+            _mapGen = new GameOfLifeMapGen(BirthCondition, DeathCondition, InitChance);
+        }
+        if (AlgorithmToUse == 1)
+        {
+            _mapGen = new SimplexMapGen();
+        }
         _assetsService = new AssetsServices();
     }
 
@@ -72,13 +80,13 @@ public class MapGenerator : MonoBehaviour
 
         if (_grid == null)
         {
-            _grid = _cellsGenerator.PopulateInitialMap(width, height, InitChance);
+            _grid = _mapGen.Generate(_grid, width, height);
         }
 
         timer.Start();
         for (int i = 0; i < InterationsCount; i++)
         {
-            _grid = _cellsGenerator.Generate(_grid, width, height);
+            _grid = _mapGen.Generate(_grid, width, height);
         }
         timer.Stop();
         UnityEngine.Debug.Log($"Elapsed time calc: {timer.ElapsedMilliseconds}");
@@ -88,7 +96,7 @@ public class MapGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                if (_grid[x, y] == 1)
+                if (_grid[x, y] > 0)
                     TopMap.SetTile(new Vector3Int(-x + width / 2, -y + height / 2, 0), TopTile);
                 BotMap.SetTile(new Vector3Int(-x + width / 2, -y + height / 2, 0), BotTile);
             }

@@ -1,25 +1,30 @@
 ﻿using Assets.Scripts.Interfaces;
-using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class CellsGenerator : ICellsGenerator
+    public class GameOfLifeMapGen : IMapGen
     {
         private readonly int _deathLimit;
+        private readonly int _chance;
         private readonly int _birthLimit;
 
-        public CellsGenerator(int birthLimit, int deathLimit)
+        public GameOfLifeMapGen(int birthLimit, int deathLimit, int chance)
         {
             _birthLimit = birthLimit;
             _deathLimit = deathLimit;
+            _chance = chance;
         }
 
-        public int[,] Generate(int[,] oldMap, int width, int height)
+        public float[,] Generate(float[,] oldMap, int width, int height)
         {
-            int[,] newMap = new int[width, height];
-            int numberOfNeighbours;
+            if (oldMap == null)
+            {
+                return PopulateInitialMap(width, height, _chance);
+            }
+            float[,] newMap = new float[width, height];
+            float numberOfNeighbours;
             Parallel.For(0, width, (x, state) =>
             {
                 for (int y = 0; y < height; y++)
@@ -48,9 +53,9 @@ namespace Assets.Scripts
             return newMap;
         }
 
-        private static int CountLivingNeighbours(int[,] oldMap, int width, int height, int posX, int posY)
+        private static float CountLivingNeighbours(float[,] oldMap, int width, int height, int posX, int posY)
         {
-            int neighb = 0;
+            float neighb = 0;
             BoundsInt myB = new BoundsInt(-1, -1, 0, 3, 3, 1);
 
             foreach (var b in myB.allPositionsWithin)
@@ -71,13 +76,13 @@ namespace Assets.Scripts
             return neighb;
         }
 
-        public int[,] PopulateInitialMap(int width, int height, int chance)
+        private static float[,] PopulateInitialMap(int width, int height, int chance)
         {
-            int[,] newMap = new int[width, height];
+            float[,] newMap = new float[width, height];
             return SpawnRandomCells(newMap, width, height, chance);
         }
 
-        public int[,] SpawnRandomCells(int[,] map, int width, int height, int chance)
+        private static float[,] SpawnRandomCells(float[,] map, int width, int height, int chance)
         {
             for (int x = 0; x < width; x++)
             {

@@ -541,8 +541,9 @@ MonoBehaviour:
   BotMap: {fileID: 478681876}
   TopTile: {fileID: 11400000, guid: cf61ff95ca674bf459702c2e3495b890, type: 2}
   BotTile: {fileID: 11400000, guid: 47f0919c6d64e074db6ee41dfcb7ed17, type: 2}
-  TmpSize: {x: 120, y: 75, z: 0}
+  TmpSize: {x: 120, y: 120, z: 0}
   InitChance: 30
   BirthCondition: 3
   DeathCondition: 2
   InterationsCount: 1
+  AlgorithmToUse: 1
